@@ -4,57 +4,23 @@ import { NextApiRequest, NextApiResponse } from 'next'
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { email, phone } = req.body
-  const payload = phone ? { phone: +phone } : { email }
-  const user = await client.user.upsert({
-    where: { ...payload },
-    create: {
-      name: 'Anonymous',
-      ...payload,
+  const user = phone ? { phone: +phone } : { email }
+  const payload = Math.floor(100000 + Math.random() * 900000) + ''
+  const token = await client.token.create({
+    data: {
+      payload,
+      user: {
+        connectOrCreate: {
+          where: { ...user },
+          create: {
+            name: 'Anonymous',
+            ...user,
+          },
+        },
+      },
     },
-    update: {},
   })
-  console.log(user)
-  //  let user
-  // if (email) {
-  //   user = await client.user.findUnique({
-  //     where: {
-  //       email,
-  //     },
-  //   })
-  //   if (user) {
-  //     console.log('User found')
-  //   }
-  //   if (!user) {
-  //     console.log('User not found')
-  //     user = await client.user.create({
-  //       data: {
-  //         name: 'Anonymous',
-  //         email,
-  //       },
-  //     })
-  //   }
-  //   console.log(user)
-  // }
-  // if (phone) {
-  //   user = await client.user.findUnique({
-  //     where: {
-  //       phone: +phone,
-  //     },
-  //   })
-  //   if (user) {
-  //     console.log('User found')
-  //   }
-  //   if (!user) {
-  //     console.log('User not found')
-  //     user = await client.user.create({
-  //       data: {
-  //         name: 'Anonymous',
-  //         phone: +phone,
-  //       },
-  //     })
-  //   }
-  //   console.log(user)
-  // }
+  console.log(token)
   return res.status(200).end()
 }
 
