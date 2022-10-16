@@ -1,5 +1,9 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.status(200).json({ name: 'Mingu Kim' })
+  if (req.method !== 'POST') {
+    res.status(405).end()
+  }
+  console.log(req.body.email)
+  res.status(200).end()
 }
