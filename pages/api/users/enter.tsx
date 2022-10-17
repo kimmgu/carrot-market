@@ -39,21 +39,21 @@ async function handler(
     },
   })
   if (phone) {
-    const msg = await twilioClient.messages.create({
-      messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
-      // to: phone,
-      to: process.env.MY_PHONE_NUMBER!,
-      body: `Your verification code is ${payload}`,
-    })
-    console.log(msg)
+    // const msg = await twilioClient.messages.create({
+    //   messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,
+    //   // to: phone,
+    //   to: process.env.MY_PHONE_NUMBER!,
+    //   body: `Your verification code is ${payload}`,
+    // })
+    // console.log(msg)
   } else if (email) {
-    const mail = await mg.messages.create('mingufkim@gmail.com', {
-      from: 'Mingu Kim <mingufkim@gmail.com>',
-      to: email,
-      subject: 'Carrot Market Verification Code',
-      text: `Your verification code is ${payload}`,
-    })
-    console.log(mail)
+    // const mail = await mg.messages.create('mingufkim@gmail.com', {
+    //   from: 'Mingu Kim <mingufkim@gmail.com>',
+    //   to: email,
+    //   subject: 'Carrot Market Verification Code',
+    //   text: `Your verification code is ${payload}`,
+    // })
+    // console.log(mail)
   }
   return res.json({
     ok: true,
