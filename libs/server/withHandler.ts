@@ -9,7 +9,7 @@ export const withHandler = (
   method: 'GET' | 'POST' | 'DELETE',
   handler: NextApiHandler
 ): NextApiHandler => {
-  return async (req, res) => {
+  return async (req, res): Promise<any> => {
     if (req.method !== method) {
       res.status(405).end()
     }
