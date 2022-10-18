@@ -27,16 +27,9 @@ const Upload: NextPage = () => {
             <input className="hidden" type="file" />
           </label>
         </div>
-        <Input required label="제목" name="name" type="text" />
-        <Input
-          required
-          label="가격"
-          placeholder="0"
-          name="price"
-          type="text"
-          kind="price"
-        />
-        <TextArea name="description" label="내용" />
+        <Input required label="상품명" name="name" type="text" />
+        <Input required label="가격" name="price" type="text" kind="price" />
+        <TextArea name="description" label="상품내용" />
         <Button text="완료" />
       </form>
     </Layout>
