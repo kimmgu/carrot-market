@@ -26,7 +26,7 @@ const Home: NextPage = () => {
             id={product.id}
             key={product.id}
             title={product.name}
-            price={product.price}
+            price={product.price.toLocaleString('ko-KR')}
             comments={1}
             hearts={1}
           />

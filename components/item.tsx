@@ -3,7 +3,7 @@ import Link from 'next/link'
 interface ItemProps {
   title: string
   id: number
-  price: number
+  price: number | string
   comments: number
   hearts: number
 }
