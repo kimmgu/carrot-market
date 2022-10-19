@@ -1,5 +1,5 @@
 import Layout from '@components/layout'
-import Product from '@components/product'
+import Item from '@components/item'
 import { NextPage } from 'next'
 
 const Favorites: NextPage = () => {
@@ -7,7 +7,7 @@ const Favorites: NextPage = () => {
     <Layout title="관심목록" canGoBack>
       <div className="flex flex-col space-y-5 pb-10  divide-y">
         {[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1].map((_, i) => (
-          <Product
+          <Item
             key={i}
             id={i}
             title="Apple Watch Hermès"
