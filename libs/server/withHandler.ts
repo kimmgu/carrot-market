@@ -5,19 +5,21 @@ export interface ResponseType {
   [key: string]: any
 }
 
+type method = 'GET' | 'POST' | 'DELETE'
+
 interface ConfigType {
-  method: 'GET' | 'POST' | 'DELETE'
+  methods: method[]
   handler: NextApiHandler
   isPrivate?: boolean
 }
 
 export const withHandler = ({
-  method,
+  methods,
   isPrivate = true,
   handler,
 }: ConfigType): NextApiHandler => {
   return async (req, res): Promise<any> => {
-    if (req.method !== method) {
+    if (req.method && !methods.includes(req.method as any)) {
       return res.status(405).json({ ok: false, message: 'Method not allowed' })
     }
     if (isPrivate && !req.session.user) {
