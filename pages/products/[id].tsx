@@ -21,13 +21,15 @@ interface ItemDetailResponse {
 
 const ItemDetail: NextPage = () => {
   const router = useRouter()
-  const { data } = useSWR<ItemDetailResponse>(
+  const { data, mutate } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   )
   const [toggleFavorite] = useMutation(
     `/api/products/${router.query.id}/favorite`
   )
   const onFavoriteClick = () => {
+    if (!data) return
+    mutate({ ...data, isFavorited: !data.isFavorited }, false)
     toggleFavorite({})
   }
   return (
@@ -48,7 +50,7 @@ const ItemDetail: NextPage = () => {
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 -4 12 24"
-                    stroke-width="1.5"
+                    strokeWidth="1.5"
                     stroke="currentColor"
                     className="w-3 h-3"
                   >
