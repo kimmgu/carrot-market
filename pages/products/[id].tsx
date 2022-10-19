@@ -1,8 +1,15 @@
 import Button from '@components/button'
 import Layout from '@components/layout'
 import { NextPage } from 'next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import useSWR from 'swr'
 
 const ProductDetail: NextPage = () => {
+  const router = useRouter()
+  const { data } = useSWR(
+    router.query.id ? `/api/products/${router.query.id}` : null
+  )
   return (
     <Layout canGoBack>
       <div className="px-4  py-4">
@@ -11,20 +18,24 @@ const ProductDetail: NextPage = () => {
           <div className="flex cursor-pointer py-3 border-t border-b items-center space-x-3">
             <div className="w-12 h-12 rounded-full bg-slate-300" />
             <div>
-              <p className="text-sm font-medium text-gray-700">팀 쿡</p>
-              <p className="text-xs font-medium text-gray-500">
-                판매자 정보 &rarr;
+              <p className="text-sm font-medium text-gray-700">
+                {data?.product?.user?.name}
               </p>
+              <Link href={`/users/profiles/${data?.product?.user?.id}`}>
+                <a className="text-xs font-medium text-gray-500">
+                  판매자 정보 &rarr;
+                </a>
+              </Link>
             </div>
           </div>
           <div className="mt-5">
-            <h1 className="text-3xl font-bold text-gray-900">아이폰 14 프로</h1>
-            <span className="text-2xl block mt-3 text-gray-900">155만원</span>
-            <p className=" my-6 text-gray-700">
-              iPhone을 다루는 완전히 새로운 방법. 생명을 구할 수 있도록 설계된
-              새로운 핵심 안전 기능. 압도적인 디테일을 자랑하는 혁신적인 48MP
-              카메라. 이 모든 걸 가능케 하는 궁극의 스마트폰 칩.
-            </p>
+            <h1 className="text-3xl font-bold text-gray-900">
+              {data?.product?.name}
+            </h1>
+            <span className="text-2xl block mt-3 text-gray-900">
+              ₩{data?.product?.price.toLocaleString('ko-KR')}
+            </span>
+            <p className=" my-6 text-gray-700">{data?.product?.description}</p>
             <div className="flex items-center justify-between space-x-2">
               <Button large text="채팅하기" />
               <button className="p-3 rounded-md flex items-center justify-center text-gray-400 hover:bg-gray-100 hover:text-gray-500">
