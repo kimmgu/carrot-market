@@ -1,13 +1,24 @@
 import Button from '@components/button'
 import Layout from '@components/layout'
+import { Product, User } from '@prisma/client'
 import { NextPage } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import useSWR from 'swr'
 
-const ProductDetail: NextPage = () => {
+interface ProductWithUser extends Product {
+  user: User
+}
+
+interface ItemDetailResponse {
+  ok: boolean
+  product: ProductWithUser
+  relatedProducts: Product[]
+}
+
+const ItemDetail: NextPage = () => {
   const router = useRouter()
-  const { data } = useSWR(
+  const { data } = useSWR<ItemDetailResponse>(
     router.query.id ? `/api/products/${router.query.id}` : null
   )
   return (
@@ -61,15 +72,17 @@ const ProductDetail: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">이건 어때요?</h2>
           <div className=" mt-6 grid grid-cols-2 gap-4">
-            {[1, 2, 3, 4].map((_, i) => (
-              <div key={i}>
+            {/* <Link href={`/products/${data?.product.id}`}> */}
+            {data?.relatedProducts.map((product) => (
+              <div key={product.id}>
                 <div className="h-56 w-full mb-4 bg-slate-300" />
-                <h3 className="text-gray-700 -mb-1">아이폰 14 프로 맥스</h3>
+                <h3 className="text-gray-700 -mb-1">{product.name}</h3>
                 <span className="text-sm font-medium text-gray-900">
-                  175만원
+                  ₩{product.price.toLocaleString('ko-KR')}
                 </span>
               </div>
             ))}
+            {/* </Link> */}
           </div>
         </div>
       </div>
@@ -77,4 +90,4 @@ const ProductDetail: NextPage = () => {
   )
 }
 
-export default ProductDetail
+export default ItemDetail
