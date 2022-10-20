@@ -7,9 +7,15 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import useSWR from 'swr'
 
+interface ProductWithCount extends Product {
+  _count: {
+    favorites: number
+  }
+}
+
 interface ProductResponse {
   ok: boolean
-  products: Product[]
+  products: ProductWithCount[]
 }
 
 const Home: NextPage = () => {
@@ -28,7 +34,7 @@ const Home: NextPage = () => {
             title={product.name}
             price={product.price.toLocaleString('ko-KR')}
             comments={1}
-            hearts={1}
+            hearts={product._count.favorites}
           />
         ))}
         <FloatingButton href="/products/upload">
