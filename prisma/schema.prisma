@@ -67,6 +67,8 @@ model Post {
   question  String      @db.MediumText
   answers   Answer[]
   curiosity Curiosity[]
+  latitude  Float?
+  longitude Float?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
 }
