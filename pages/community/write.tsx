@@ -33,7 +33,7 @@ const Write: NextPage = () => {
     <Layout canGoBack title="동네생활 글쓰기">
       <form onSubmit={handleSubmit(onValid)} className="p-4 space-y-4">
         <TextArea
-          register={register('question', { required: true, minLength: 10 })}
+          register={register('question', { required: true, minLength: 5 })}
           required
           placeholder="우리 동네 관련된 질문이나 이야기를 해보세요."
         />
