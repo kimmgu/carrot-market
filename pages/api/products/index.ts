@@ -32,7 +32,7 @@ async function handler(
         name,
         price: +price,
         description,
-        image: 'https://source.unsplash.com/random',
+        image: 'img',
         user: {
           connect: {
             id: user?.id,
