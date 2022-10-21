@@ -1,18 +1,27 @@
 import Button from '@components/button'
 import Input from '@components/input'
 import Layout from '@components/layout'
+import useMutation from '@libs/client/useMutation'
 import useUser from '@libs/client/useUser'
 import { NextPage } from 'next'
+import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 
 interface EditProfileForm {
+  name?: string
   email?: string
   phone?: string
   formErrors?: string
 }
 
+interface EditProfileResponse {
+  ok: boolean
+  error?: string
+}
+
 const EditProfile: NextPage = () => {
+  const router = useRouter()
   const { user } = useUser()
   const {
     register,
@@ -22,16 +31,35 @@ const EditProfile: NextPage = () => {
     formState: { errors },
   } = useForm<EditProfileForm>()
   useEffect(() => {
+    if (user?.name) setValue('name', user.name)
     if (user?.email) setValue('email', user.email)
     if (user?.phone) setValue('phone', user.phone)
   }, [user, setValue])
-  const onValid = ({ email, phone }: EditProfileForm) => {
-    if (email === '' && phone === '') {
-      setError('formErrors', {
+  const [editProfile, { data, loading }] =
+    useMutation<EditProfileResponse>(`/api/users/me`)
+  const onValid = ({ name, email, phone }: EditProfileForm) => {
+    if (loading) return
+    if (name === '' && email === '' && phone === '') {
+      return setError('formErrors', {
         message: 'Please enter an email or phone number',
       })
     }
+    editProfile({
+      name,
+      email,
+      phone,
+    })
   }
+  useEffect(() => {
+    if (data && !data.ok && data.error) {
+      setError('formErrors', { message: data.error })
+    }
+  }, [data, setError])
+  useEffect(() => {
+    if (data?.ok === true) {
+      router.push(`/profile`)
+    }
+  }, [data, router])
   return (
     <Layout canGoBack title="프로필 수정">
       <form onSubmit={handleSubmit(onValid)} className="py-10 px-4 space-y-4">
@@ -50,6 +78,13 @@ const EditProfile: NextPage = () => {
             />
           </label>
         </div>
+        <Input
+          register={register('name')}
+          required={false}
+          label="닉네임"
+          name="name"
+          type="text"
+        />
         <Input
           register={register('email')}
           required={false}
@@ -70,7 +105,7 @@ const EditProfile: NextPage = () => {
             {errors.formErrors.message}
           </span>
         ) : null}
-        <Button text="수정하기" />
+        <Button text={loading ? '로딩중...' : '수정하기'} />
       </form>
     </Layout>
   )
