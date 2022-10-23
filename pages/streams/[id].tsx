@@ -79,7 +79,7 @@ const Streaming: NextPage = () => {
             {data?.stream?.name}
           </h1>
           <span className="text-2xl block mt-3 text-gray-900">
-            {data?.stream?.price.toLocaleString('ko-KR')}원
+            {data?.stream?.price.toLocaleString('ko-KR')} 원
           </span>
           <p className=" my-6 text-gray-700">{data?.stream?.description}</p>
         </div>
