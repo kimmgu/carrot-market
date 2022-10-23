@@ -1,24 +1,40 @@
 import Layout from '@components/layout'
 import Message from '@components/message'
 import useMutation from '@libs/client/useMutation'
+import useUser from '@libs/client/useUser'
 import { Stream } from '@prisma/client'
 import { NextPage } from 'next'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import useSWR from 'swr'
 
+interface StreamMessage {
+  message: string
+  id: number
+  user: {
+    avatar?: string
+    id: number
+  }
+}
+
+interface StreamWithMessages extends Stream {
+  messages: StreamMessage[]
+}
+
 interface StreamResponse {
   ok: true
-  stream: Stream
+  stream: StreamWithMessages
 }
 
 interface MessageForm {
   message: string
 }
 
-const Stream: NextPage = () => {
+const Streaming: NextPage = () => {
+  const { user } = useUser()
   const router = useRouter()
-  const { data } = useSWR<StreamResponse>(
+  const { data, mutate } = useSWR<StreamResponse>(
     router.query.id ? `/api/streams/${router.query.id}` : null
   )
   const { register, handleSubmit, reset } = useForm<MessageForm>()
@@ -30,6 +46,11 @@ const Stream: NextPage = () => {
     reset()
     sendMessage(form)
   }
+  useEffect(() => {
+    if (sendMessageData && sendMessageData.ok) {
+      mutate()
+    }
+  }, [sendMessageData, mutate])
   return (
     <Layout canGoBack>
       <div className="py-10 px-4  space-y-4">
@@ -46,9 +67,13 @@ const Stream: NextPage = () => {
         <div>
           <h2 className="text-2xl font-bold text-gray-900">실시간 채팅</h2>
           <div className="py-10 pb-16 h-[50vh] overflow-y-scroll  px-4 space-y-4">
-            <Message message="교통비만 빼주면 안돼?" />
-            <Message message="안돼" reversed />
-            <Message message="알겠어..." />
+            {data?.stream?.messages.map((message) => (
+              <Message
+                key={message.id}
+                message={message.message}
+                reversed={message.user.id === user?.id}
+              />
+            ))}
           </div>
           <div className="fixed py-2 bg-white  bottom-0 inset-x-0">
             <form
@@ -86,4 +111,4 @@ const Stream: NextPage = () => {
   )
 }
 
-export default Stream
+export default Streaming
