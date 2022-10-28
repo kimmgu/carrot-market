@@ -1,8 +1,20 @@
-import { NextFetchEvent, NextRequest, userAgent } from 'next/server'
+import {
+  NextFetchEvent,
+  NextRequest,
+  NextResponse,
+  userAgent,
+} from 'next/server'
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {
-  console.log(userAgent(request))
-  if (request.nextUrl.pathname.startsWith('/chats')) {
-    console.log('Chats only middleware')
+  if (userAgent(request).isBot) {
+    return new Response('Are you a bot?', { status: 403 })
   }
+  // if (!request.url.includes('/api')) {
+  //   if (
+  //     !request.url.includes('/enter') &&
+  //     !request.cookies.get('carrotsession')
+  //   ) {
+  //     return NextResponse.redirect(`${request.nextUrl.origin}/enter`)
+  //   }
+  // }
 }
