@@ -10,6 +10,7 @@ import { useForm } from 'react-hook-form'
 import Skeleton from 'react-loading-skeleton'
 
 const Bs = dynamic(
+  //@ts-ignore
   () =>
     new Promise((resolve) =>
       setTimeout(() => resolve(import('@components/bs')), 5000)
