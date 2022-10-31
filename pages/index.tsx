@@ -5,8 +5,8 @@ import useUser from '@libs/client/useUser'
 import { Product } from '@prisma/client'
 import type { NextPage } from 'next'
 import Head from 'next/head'
-import useSWR from 'swr'
 import client from '@libs/server/client'
+import useSWR, { SWRConfig } from 'swr'
 
 export interface ProductWithCount extends Product {
   _count: {
@@ -14,28 +14,28 @@ export interface ProductWithCount extends Product {
   }
 }
 
-interface ProductResponse {
+interface ProductsResponse {
   ok: boolean
   products: ProductWithCount[]
 }
 
-const Home: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
+const Home: NextPage = () => {
   const { user, isLoading } = useUser()
-  // const { data } = useSWR<ProductResponse>('/api/products')
+  const { data } = useSWR<ProductsResponse>('/api/products')
   return (
     <Layout title="홈" hasTabBar seoTitle="">
       <Head>
         <title>당근마켓</title>
       </Head>
       <div className="flex flex-col space-y-5 divide-y">
-        {products?.map((product) => (
+        {data?.products?.map((product) => (
           <Item
             id={product.id}
             key={product.id}
             title={product.name}
             price={product.price.toLocaleString('ko-KR')}
             comments={1}
-            hearts={product._count?.favorites}
+            hearts={product._count?.favorites || 0}
           />
         ))}
         <FloatingButton href="/products/upload">
@@ -60,7 +60,25 @@ const Home: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
   )
 }
 
+const Page: NextPage<{ products: ProductWithCount[] }> = ({ products }) => {
+  return (
+    <SWRConfig
+      value={{
+        fallback: {
+          '/api/products': {
+            ok: true,
+            products,
+          },
+        },
+      }}
+    >
+      <Home />
+    </SWRConfig>
+  )
+}
+
 export async function getServerSideProps() {
+  console.log('SSR')
   const products = await client.product.findMany({})
   return {
     props: {
@@ -69,4 +87,4 @@ export async function getServerSideProps() {
   }
 }
 
-export default Home
+export default Page
