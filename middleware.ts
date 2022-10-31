@@ -1,20 +1,12 @@
-import {
-  NextFetchEvent,
-  NextRequest,
-  NextResponse,
-  userAgent,
-} from 'next/server'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest, event: NextFetchEvent) {
-  if (userAgent(request).isBot) {
-    return new Response('Are you a bot?', { status: 403 })
-  }
-  // if (!request.url.includes('/api')) {
-  //   if (
-  //     !request.url.includes('/enter') &&
-  //     !request.cookies.get('carrotsession')
-  //   ) {
-  //     return NextResponse.redirect(`${request.nextUrl.origin}/enter`)
-  //   }
-  // }
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  return NextResponse.redirect(new URL('/about-2', request.url))
+}
+
+// See "Matching Paths" below to learn more
+export const config = {
+  matcher: '/about/:path*',
 }
