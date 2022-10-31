@@ -5,10 +5,17 @@ import { cls } from '@libs/client/utils'
 import { NextPage } from 'next'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
+import Skeleton from 'react-loading-skeleton'
 
-const Bs = dynamic(() => import('@components/bs'), { ssr: false })
+const Bs = dynamic(
+  () =>
+    new Promise((resolve) =>
+      setTimeout(() => resolve(import('@components/bs')), 5000)
+    ),
+  { ssr: false, suspense: true }
+)
 
 interface EnterForm {
   email?: string
@@ -123,7 +130,9 @@ const Enter: NextPage = () => {
               ) : null}
               {method === 'phone' ? (
                 <>
-                  <Bs />
+                  <Suspense fallback={<Skeleton />}>
+                    <Bs />
+                  </Suspense>
                   <Input
                     register={register('phone', { required: true })}
                     name="phone"
